@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./index.js"></script>
+</head>
+
+<body>
+    <p><input type="text" name="" id="message"><button onclick="deposit()">存入</button><span id="depzip"></span></p>
+    <p><input type="text" name="" id="del"><button onclick="del()">删除</button><span id="delzip"></span></p>
+    <p><input type="text" name="" id="query" oninput="search()"><button onclick="search()">查询</button><span
+            id="seazip"></span></p>
+    <script>
+        function deposit() {
+            let message = document.getElementById('message').value;
+            if (message) {
+                let data = JSON.parse(localStorage.getItem('data'));
+                if (!data) {
+                    data = [];
+                    data.push({ id: 1, link: message });
+                } else {
+                    data.push({ id: (data[data.length - 1].id + 1), link: message });
+                }
+                localStorage.setItem('data', JSON.stringify(data));
+                document.getElementById('depzip').innerHTML = "添加成功！";
+                setTimeout(function () {
+                    document.getElementById('depzip').innerHTML = "";
+                }, 2000);
+            }
+            document.getElementById('message').value = '';
+        }
+        function search() {
+            let query = document.getElementById('query').value;
+            if (query) {
+                let data = JSON.parse(localStorage.getItem('data'));
+                data.forEach(item => {
+                    if (item.id == query) {
+                        let reg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\/])+$/;
+                        if (reg.test(item.link) != true) {
+                            document.getElementById('seazip').innerHTML = "跳转失败此链接无效";
+                            setTimeout(function () {
+                                document.getElementById('seazip').innerHTML = "";
+                            }, 2000);
+                        } else {
+                            window.open(item.link);
+                        }
+                    }
+                })
+            }
+        }
+
+        function del() {
+            let del = document.getElementById('del').value;
+            let data = JSON.parse(localStorage.getItem('data'));
+            data.forEach(item => {
+                if (item.id == del) {
+                    let index = data.indexOf(item);
+                    data.splice(index, 1);
+                }
+            })
+            localStorage.setItem('data', JSON.stringify(data));
+            document.getElementById('del').value = '';
+            document.getElementById('delzip').innerHTML = "删除成功!";
+            setTimeout(function () {
+                document.getElementById('delzip').innerHTML = "";
+            }, 2000);
+        }
+
+        // function debounce(func, wait) {
+        //     var timeout;
+        //     var debounce = function () {
+        //         console.log(1);
+        //         var _this = this;
+        //         var ars = arguments;
+        //         if (timeout) clearTimeout(timeout);
+        //         timeout = setTimeout(function () {
+        //             func.apply(_this, ars);
+        //         }, wait);
+        //     }
+        //     return debounce;
+        // }
+    </script>
+</body>
+
+</html>
